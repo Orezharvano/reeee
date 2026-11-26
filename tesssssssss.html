@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ClassGram • XII MIPA 1 Official</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter, Plus Jakarta Sans & Grand Hotel (Logo ala IG) -->
+    <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                        logo: ['Grand Hotel', 'cursive'],
+                    },
+                    colors: {
+                        ig: {
+                            blue: '#0095F6',
+                            pink: '#E1306C',
+                            orange: '#F77737',
+                            yellow: '#FCAF45',
+                            purple: '#833AB4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Sembunyikan scrollbar namun tetap mendukung touch & drag scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Cincin gradien autentik Instagram Stories */
+        .story-ring {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            padding: 2.5px;
+        }
+        .story-ring-seen {
+            background: #cbd5e1;
+            padding: 2px;
+        }
+        .dark .story-ring-seen {
+            background: #334155;
+        }
+
+        /* Animasi Hati Double Tap */
+        @keyframes heartBurst {
+            0% { transform: scale(0) rotate(-18deg); opacity: 0; }
+            25% { transform: scale(1.28) rotate(8deg); opacity: 1; }
+            50% { transform: scale(0.92) rotate(-4deg); opacity: 1; }
+            75% { transform: scale(1.06) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0; }
+        }
+        .animate-heart-burst {
+            animation: heartBurst 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Animasi Pop Tombol Like */
+        @keyframes popLike {
+            0% { transform: scale(1); }
+            45% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: popLike 0.3s ease-out;
+        }
+
+        /* Animasi Reaksi Emoji Melayang di Story */
+        @keyframes floatReaction {
+            0% { transform: translateY(0) scale(0.6); opacity: 0; }
+            20% { transform: translateY(-35px) scale(1.3); opacity: 1; }
+            100% { transform: translateY(-320px) scale(1.6) rotate(14deg); opacity: 0; }
+        }
+        .animate-float-emoji {
+            animation: floatReaction 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Perspektif 3D untuk transisi geser antar Story */
+        .story-3d-stage {
+            perspective: 1200px;
+        }
+        .story-cube-card {
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            will-change: transform, opacity;
+        }
+
+        /* Transisi Tab Swipe */
+        .tab-slider {
+            transition: transform 0.32s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+
+        /* Mencegah highlight tap browser mobile */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        input, textarea {
+            user-select: text;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-neutral-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
+
+    <!-- SHELL APLIKASI MOBILE-FIRST -->
+    <div id="app-shell" class="max-w-md mx-auto min-h-screen bg-white dark:bg-black shadow-2xl border-x border-slate-200/80 dark:border-neutral-800/80 relative flex flex-col pb-16 overflow-x-hidden">
+
+        <!-- ==================== TOP BAR KHAS INSTAGRAM ==================== -->
+        <header class="sticky top-0 z-30 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-slate-200/70 dark:border-neutral-800 px-4 h-13 py-2 flex items-center justify-between">
+            <!-- Logo Tulisan Kelas Bergaya IG -->
+            <div onclick="switchBottomNav('home')" class="flex items-center gap-1.5 cursor-pointer active:opacity-75 transition">
+                <span class="font-logo text-[28px] leading-none tracking-wide bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent">
+                    ClassGram
+                </span>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-300">
+                    XII MIPA 1
+                </span>
+            </div>
+
+            <!-- Ikon Aksi Top Right: Tambah (+), Aktivitas (Hati), Dark Mode, DM Kelas -->
+            <div class="flex items-center gap-1.5">
+                <button onclick="openCreateModal('post')" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-neutral-800 active:scale-90 transition" title="Buat Postingan atau Story">
+                    <i data-lucide="plus-square" class="w-5 h-5 stroke-[2.2]"></i>
+                </button>
+                <button onclick="openActivityModal()" class="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-neutral-800 active:scale-90 transition" title="Aktivitas & Notifikasi Kelas">
+                    <i data-lucide="heart" class="w-5 h-5 stroke-[2.2]"></i>
+                    <span id="notif-dot" class="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-black"></span>
+                </button>
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-neutral-800 active:scale-90 transition" title="Ganti Tema">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden stroke-[2.2]"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400 stroke-[2.2]"></i>
+                </button>
+                <button onclick="openDmModal()" class="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-neutral-800 active:scale-90 transition" title="Pesan / Obrolan Kelas">
+                    <i data-lucide="send" class="w-5 h-5 stroke-[2.2]"></i>
+                    <span class="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================== HALAMAN 1: BERANDA / FEED + IGS BAR ==================== -->
+        <main id="view-home" class="flex-1 flex flex-col">
+            
+            <!-- BARISAN INSTAGRAM STORIES (IGS) ATAS -->
+            <section class="pt-3 pb-2.5 border-b border-slate-200/70 dark:border-neutral-800 bg-white dark:bg-black">
+                <div id="top-stories-bar" class="flex gap-3.5 overflow-x-auto no-scrollbar px-3.5 snap-x scroll-smooth cursor-grab active:cursor-grabbing">
+                    <!-- Dirender otomatis lewat JavaScript (Lingkaran "Story Kelas +" + IGS aktif) -->
+                </div>
+            </section>
+
+            <!-- FEED POSTINGAN BERANDA ALA TIMELINE INSTAGRAM -->
+            <div id="home-feed-list" class="divide-y divide-slate-200/80 dark:divide-neutral-800">
+                <!-- Postingan Feed dirender JS -->
+            </div>
+        </main>
+
+        <!-- ==================== HALAMAN 2: PROFIL KELAS LENGKAP ==================== -->
+        <main id="view-profile" class="hidden flex-1 flex-col">
+            <!-- Header Username Profil -->
+            <div class="px-4 pt-3 pb-1 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-500"></i>
+                    <h1 id="profile-username" class="font-display font-extrabold text-base tracking-tight">xiimipa1.official</h1>
+                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-ig-blue text-white">
+                        <i data-lucide="check" class="w-2.5 h-2.5 stroke-[3]"></i>
+                    </span>
+                </div>
+                <span class="text-[11px] font-medium text-slate-400">Angkatan 2026</span>
+            </div>
+
+            <!-- Info Avatar & Statistik -->
+            <section class="px-4 pt-2 pb-3">
+                <div class="flex items-center justify-between gap-4">
+                    <!-- Foto Profil Kelas (Klik untuk buka IGS Kelas) -->
+                    <div onclick="openStory(0)" class="relative cursor-pointer group shrink-0">
+                        <div class="story-ring rounded-full p-[3px] group-active:scale-95 transition-transform">
+                            <div class="bg-white dark:bg-black p-[2px] rounded-full">
+                                <img id="class-avatar" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=300&q=80"
+                                     onerror="this.src='https://placehold.co/300x300/6366f1/ffffff?text=XII+MIPA+1'"
+                                     alt="Avatar Kelas" class="w-20 h-20 rounded-full object-cover">
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); openCreateModal('story')" class="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-ig-blue text-white border-2 border-white dark:border-black flex items-center justify-center shadow-md active:scale-90 transition" title="Tambah Story Kelas">
+                            <i data-lucide="plus" class="w-3.5 h-3.5 stroke-[3]"></i>
+                        </button>
+                    </div>
+
+                    <!-- Statistik: Postingan, Anggota, Mengikuti -->
+                    <div class="flex-1 flex justify-around text-center">
+                        <div onclick="switchProfileTab(0)" class="cursor-pointer active:opacity-70">
+                            <p id="stat-posts" class="font-display font-bold text-lg leading-tight">6</p>
+                            <p class="text-xs text-slate-500 dark:text-neutral-400">Postingan</p>
+                        </div>
+                        <div onclick="switchProfileTab(2)" class="cursor-pointer active:opacity-70">
+                            <p id="stat-members" class="font-display font-bold text-lg leading-tight">34</p>
+                            <p class="text-xs text-slate-500 dark:text-neutral-400">Anggota</p>
+                        </div>
+                        <div onclick="openStory(2)" class="cursor-pointer active:opacity-70">
+                            <p class="font-display font-bold text-lg leading-tight">12</p>
+                            <p class="text-xs text-slate-500 dark:text-neutral-400">Mengikuti</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bio Kelas -->
+                <div class="mt-3">
+                    <div class="flex items-center gap-2">
+                        <h2 id="bio-title" class="font-bold text-sm">XII MIPA 1 • SMAN 1 Nusantara</h2>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-300 font-semibold">Kelas Unggulan</span>
+                    </div>
+                    <p id="bio-desc" class="text-xs sm:text-sm text-slate-700 dark:text-neutral-300 mt-1 leading-relaxed whitespace-pre-line">✨ Satu tujuan, sejuta kenangan, lulus bareng 100%!
+👩‍🏫 Wali Kelas: Bu Ratna Sari, S.Pd.
+📍 Gedung B Lantai 2 • Ruang 204</p>
+                    <a href="javascript:void(0)" onclick="openToast('Tautan Album Google Drive Kelas disalin! 📁')" class="inline-flex items-center gap-1 text-xs font-semibold text-ig-blue mt-1 hover:underline">
+                        <i data-lucide="link" class="w-3 h-3"></i>
+                        drive.kelas/galeri-xiimipa1
+                    </a>
+                </div>
+
+                <!-- Tombol Aksi Profil: Edit Profil (dengan Sandi Admin) & Jadwal Piket -->
+                <div class="grid grid-cols-2 gap-2 mt-3.5">
+                    <button onclick="openEditBioModal()" class="py-1.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-xs font-semibold rounded-lg transition active:scale-95 flex items-center justify-center gap-1.5">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Profil
+                    </button>
+                    <button onclick="switchProfileTab(1)" class="py-1.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-xs font-semibold rounded-lg transition active:scale-95 flex items-center justify-center gap-1.5">
+                        <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Jadwal & Piket
+                    </button>
+                </div>
+            </section>
+
+            <!-- STORY HIGHLIGHTS (SOROTAN CERITA) -->
+            <section class="py-2.5 border-t border-b border-slate-100 dark:border-neutral-900">
+                <div id="profile-highlights-bar" class="flex gap-3.5 overflow-x-auto no-scrollbar px-4 snap-x scroll-smooth cursor-grab active:cursor-grabbing">
+                    <!-- Dirender JS -->
+                </div>
+            </section>
+
+            <!-- TAB NAVIGASI PROFIL YANG BISA DIGESER (SWIPEABLE TABS) -->
+            <div class="sticky top-13 z-20 bg-white dark:bg-black border-b border-slate-200 dark:border-neutral-800">
+                <div class="grid grid-cols-3 relative">
+                    <button onclick="switchProfileTab(0)" id="tab-btn-0" class="py-2.5 flex items-center justify-center gap-1.5 text-slate-900 dark:text-white transition-colors" title="Postingan Kelas">
+                        <i data-lucide="grid" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="switchProfileTab(1)" id="tab-btn-1" class="py-2.5 flex items-center justify-center gap-1.5 text-slate-400 dark:text-neutral-500 transition-colors" title="Jadwal & Piket">
+                        <i data-lucide="calendar-check" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="switchProfileTab(2)" id="tab-btn-2" class="py-2.5 flex items-center justify-center gap-1.5 text-slate-400 dark:text-neutral-500 transition-colors" title="Anggota Kelas">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </button>
+                    <!-- Indikator Garis Bawah -->
+                    <div id="tab-indicator" class="absolute bottom-0 left-0 w-1/3 h-[2px] bg-slate-900 dark:bg-white transition-transform duration-300"></div>
+                </div>
+            </div>
+
+            <!-- SWIPEABLE VIEWPORT UNTUK 3 TAB PROFIL -->
+            <div id="swipe-tabs-viewport" class="overflow-hidden w-full flex-1 touch-pan-y">
+                <div id="swipe-tabs-track" class="flex w-[300%] tab-slider">
+                    
+                    <!-- TAB 0: POSTINGAN KELAS (Bisa Toggle antara Grid 3x3 & Feed Scroll) -->
+                    <div class="w-1/3">
+                        <div class="px-4 py-2 bg-slate-50/80 dark:bg-neutral-900/50 flex items-center justify-between border-b border-slate-100 dark:border-neutral-800/80">
+                            <span class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400">Galeri Momen Kelas</span>
+                            <div class="flex items-center gap-1 bg-slate-200/70 dark:bg-neutral-800 p-0.5 rounded-lg">
+                                <button onclick="toggleProfilePostsLayout('grid')" id="layout-btn-grid" class="px-2 py-1 rounded-md bg-white dark:bg-neutral-900 text-[11px] font-bold shadow-2xs transition">
+                                    Grid 3x3
+                                </button>
+                                <button onclick="toggleProfilePostsLayout('feed')" id="layout-btn-feed" class="px-2 py-1 rounded-md text-[11px] font-medium text-slate-500 dark:text-neutral-400 transition">
+                                    Feed
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mode Grid 3x3 -->
+                        <div id="posts-grid" class="grid grid-cols-3 gap-[2px] bg-white dark:bg-black">
+                            <!-- Grid item dirender JS -->
+                        </div>
+
+                        <!-- Mode Feed di dalam Profil -->
+                        <div id="profile-posts-feed" class="hidden divide-y divide-slate-200/80 dark:divide-neutral-800">
+                            <!-- Feed item dirender JS -->
+                        </div>
+
+                        <div class="p-5 text-center text-[11px] text-slate-400 dark:text-neutral-500">
+                            Geser ke kiri/kanan untuk melihat Jadwal & Anggota Kelas ↔️
+                        </div>
+                    </div>
+
+                    <!-- TAB 1: JADWAL PELAJARAN & PIKET (Interaktif Bisa Digeser Antar Hari) -->
+                    <div class="w-1/3 p-4 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-display font-bold text-base">Jadwal Pelajaran & Piket</h3>
+                                <p class="text-[11px] text-slate-500 dark:text-neutral-400">Pilih atau geser kartu jadwal antar hari Senin–Sabtu</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full bg-ig-blue/10 text-ig-blue text-[11px] font-bold">Semester Genap</span>
+                        </div>
+
+                        <!-- Pil Hari Senin - Sabtu -->
+                        <div id="day-selector" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                            <!-- Tombol hari dirender JS -->
+                        </div>
+
+                        <!-- Area Jadwal yang Bisa Di-Swipe Kiri/Kanan -->
+                        <div id="schedule-swipe-area" class="space-y-3.5 touch-pan-y">
+                            <!-- Konten jadwal & piket dirender JS -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ANGGOTA KELAS & PENGURUS -->
+                    <div class="w-1/3 p-4 space-y-4">
+                        <!-- Kartu Wali Kelas -->
+                        <div class="p-3.5 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-200/60 dark:border-indigo-500/20 flex items-center gap-3.5">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
+                                 onerror="this.src='https://placehold.co/200x200/6366f1/ffffff?text=Wali+Kelas'"
+                                 class="w-14 h-14 rounded-full object-cover ring-2 ring-indigo-500" alt="Wali Kelas">
+                            <div class="flex-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white">Wali Kelas</span>
+                                <h3 class="font-bold text-sm mt-1">Bu Ratna Sari, S.Pd.</h3>
+                                <p class="text-xs text-slate-500 dark:text-neutral-400">Guru Matematika Peminatan</p>
+                            </div>
+                        </div>
+
+                        <!-- Pengurus Inti -->
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500 mb-2.5">Pengurus Inti Kelas</h4>
+                            <div id="pengurus-list" class="grid grid-cols-2 gap-2.5">
+                                <!-- Dirender JS -->
+                            </div>
+                        </div>
+
+                        <!-- Daftar Anggota Kelas -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-500">Daftar Siswa (34 Anggota)</h4>
+                                <span class="text-[11px] text-emerald-500 font-semibold">● Online</span>
+                            </div>
+                            <div id="anggota-list" class="divide-y divide-slate-100 dark:divide-neutral-800/80 bg-slate-50/70 dark:bg-neutral-900/60 rounded-2xl px-3">
+                                <!-- Dirender JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== BOTTOM NAVIGATION BAR KHAS INSTAGRAM ==================== -->
+        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-30 bg-white/95 dark:bg-black/95 backdrop-blur-md border-t border-slate-200/80 dark:border-neutral-800 h-13 py-1.5 px-6 flex items-center justify-between">
+            <button onclick="switchBottomNav('home')" id="nav-home" class="p-2 text-slate-900 dark:text-white active:scale-90 transition" title="Beranda & Story">
+                <i data-lucide="home" class="w-6 h-6 stroke-[2.3]"></i>
+            </button>
+            <button onclick="switchBottomNav('schedule')" id="nav-schedule" class="p-2 text-slate-400 dark:text-neutral-500 active:scale-90 transition" title="Jadwal & Piket">
+                <i data-lucide="calendar-days" class="w-6 h-6"></i>
+            </button>
+            <button onclick="openCreateModal('post')" class="p-2 text-slate-400 dark:text-neutral-500 active:scale-90 transition" title="Unggah Momen">
+                <i data-lucide="plus-square" class="w-6 h-6"></i>
+            </button>
+            <button onclick="switchBottomNav('members')" id="nav-members" class="p-2 text-slate-400 dark:text-neutral-500 active:scale-90 transition" title="Anggota Kelas">
+                <i data-lucide="users" class="w-6 h-6"></i>
+            </button>
+            <button onclick="switchBottomNav('profile')" id="nav-profile" class="p-1 rounded-full border-2 border-transparent active:scale-90 transition" title="Profil Kelas">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=100&q=80" class="w-6 h-6 rounded-full object-cover" alt="Profil">
+            </button>
+        </nav>
+
+        <!-- ==================== MODAL 1: FULLSCREEN STORY VIEWER (3D CUBE / SMOOTH SWIPE) ==================== -->
+        <div id="story-modal" class="fixed inset-0 z-50 bg-neutral-950 hidden flex-col justify-between max-w-md mx-auto select-none overflow-hidden story-3d-stage">
+            <div id="story-swipe-wrapper" class="story-cube-card relative w-full h-full flex flex-col justify-between bg-neutral-900">
+                
+                <!-- Top UI Overlay (Progress Bar + Info Akun + Tombol Pause & Close) -->
+                <div id="story-top-ui" class="p-3 pt-4 z-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent transition-opacity duration-200">
+                    <!-- Segmented Progress Bars -->
+                    <div id="story-progress-bars" class="flex gap-1.5 mb-3"></div>
+                    
+                    <div class="flex items-center justify-between text-white">
+                        <div class="flex items-center gap-2.5">
+                            <div class="story-ring rounded-full p-[1.5px]">
+                                <img id="story-avatar" src="" class="w-8 h-8 rounded-full object-cover border border-black" alt="">
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <p id="story-author" class="text-xs font-bold leading-none"></p>
+                                    <span id="story-time" class="text-[11px] text-white/70"></span>
+                                </div>
+                                <p id="story-subtitle" class="text-[10px] text-white/75 mt-0.5"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="toggleStoryPauseButton()" id="story-pause-btn" class="p-1.5 rounded-full bg-white/15 hover:bg-white/25 active:scale-90 transition" title="Jeda / Putar">
+                                <i data-lucide="pause" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="closeStory()" class="p-1.5 rounded-full bg-white/15 hover:bg-white/25 active:scale-90 transition" title="Tutup Story">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Touch & Drag Area untuk Geser Antar Story / Tap Kiri-Kanan / Press & Hold -->
+                <div id="story-touch-area" class="absolute inset-0 flex items-center justify-center cursor-pointer">
+                    <img id="story-image" src="" onerror="this.src='https://placehold.co/600x1000/1e1b4b/ffffff?text=IG+Story+Kelas'" class="w-full h-full object-cover" alt="Story">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/30"></div>
+
+                    <!-- Caption Story -->
+                    <div id="story-caption-ui" class="absolute bottom-28 left-5 right-5 text-white z-10 pointer-events-none transition-opacity duration-200">
+                        <span id="story-badge" class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold bg-ig-blue mb-2 shadow-md"></span>
+                        <h3 id="story-heading" class="font-display font-bold text-xl leading-snug drop-shadow"></h3>
+                        <p id="story-caption" class="text-xs text-white/90 mt-1.5 leading-relaxed drop-shadow"></p>
+                    </div>
+                </div>
+
+                <!-- Layer Animasi Emoji Melayang -->
+                <div id="story-emoji-layer" class="pointer-events-none absolute inset-0 overflow-hidden z-30"></div>
+
+                <!-- Bottom UI Overlay (Reaksi Cepat & Balas Story) -->
+                <div id="story-bottom-ui" class="p-3 pb-4 z-20 space-y-2.5 bg-gradient-to-t from-black/90 to-transparent transition-opacity duration-200">
+                    <!-- 5 Tombol Reaksi Cepat -->
+                    <div class="flex items-center justify-center gap-3">
+                        <button onclick="triggerStoryReaction('❤️')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center text-lg active:scale-125 transition">❤️</button>
+                        <button onclick="triggerStoryReaction('😂')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center text-lg active:scale-125 transition">😂</button>
+                        <button onclick="triggerStoryReaction('🔥')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center text-lg active:scale-125 transition">🔥</button>
+                        <button onclick="triggerStoryReaction('👏')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center text-lg active:scale-125 transition">👏</button>
+                        <button onclick="triggerStoryReaction('😍')" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center text-lg active:scale-125 transition">😍</button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="story-reply-input" onfocus="pauseStory(false)" onblur="resumeStory()" placeholder="Kirim pesan..." class="flex-1 bg-white/15 backdrop-blur-md text-white placeholder-white/70 text-xs px-4 py-2.5 rounded-full border border-white/25 focus:outline-none focus:border-white">
+                        <button onclick="sendStoryReply()" class="p-2.5 rounded-full bg-ig-blue text-white active:scale-90 transition shrink-0">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== MODAL 2: DETAIL POSTINGAN & BOTTOM-SHEET KOMENTAR ==================== -->
+        <div id="post-modal" class="fixed inset-0 z-40 bg-black/75 backdrop-blur-xs hidden items-end sm:items-center justify-center">
+            <div class="bg-white dark:bg-neutral-900 w-full max-w-md h-[92vh] sm:h-[86vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+                <!-- Header Modal -->
+                <div class="px-4 py-3 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2.5">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=100&q=80" class="w-8 h-8 rounded-full object-cover" alt="">
+                        <div>
+                            <p class="text-xs font-bold">xiimipa1.official</p>
+                            <p id="modal-post-location" class="text-[11px] text-slate-500 dark:text-neutral-400">SMAN 1 Nusantara</p>
+                        </div>
+                    </div>
+                    <button onclick="closePostModal()" class="p-1.5 rounded-full bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 active:scale-90 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Konten Postingan Scrollable -->
+                <div class="flex-1 overflow-y-auto no-scrollbar">
+                    <!-- Carousel Foto Multi-Slide (Swipeable + Double-Tap Like) -->
+                    <div id="modal-carousel-container" class="relative w-full aspect-square bg-slate-100 dark:bg-neutral-950 overflow-hidden select-none">
+                        <div id="modal-carousel-track" class="flex h-full transition-transform duration-300 ease-out"></div>
+
+                        <!-- Animasi Hati Double-Tap -->
+                        <div id="modal-heart-overlay" class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0">
+                            <i data-lucide="heart" class="w-24 h-24 text-white fill-rose-500 drop-shadow-2xl"></i>
+                        </div>
+
+                        <!-- Panah Navigasi Carousel -->
+                        <button id="carousel-prev" onclick="moveModalCarousel(-1)" class="hidden absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-xs active:scale-90">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button id="carousel-next" onclick="moveModalCarousel(1)" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-xs active:scale-90">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Badge Angka Slide (1/3) -->
+                        <div id="carousel-counter" class="hidden absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/65 text-white text-[11px] font-semibold backdrop-blur-xs">
+                            1/3
+                        </div>
+                    </div>
+
+                    <!-- Titik Indikator Biru -->
+                    <div id="carousel-dots" class="flex justify-center gap-1.5 pt-2.5"></div>
+
+                    <!-- Bar Aksi: Like, Komentar, Bagikan, Simpan -->
+                    <div class="px-4 pt-2 pb-1 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button id="modal-like-btn" onclick="toggleCurrentPostLike()" class="active:scale-90 transition">
+                                <i data-lucide="heart" class="w-6 h-6"></i>
+                            </button>
+                            <button onclick="document.getElementById('modal-comment-input').focus()" class="active:scale-90 transition">
+                                <i data-lucide="message-circle" class="w-6 h-6"></i>
+                            </button>
+                            <button onclick="openToast('Link postingan kelas disalin! 🔗')" class="active:scale-90 transition">
+                                <i data-lucide="send" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                        <button id="modal-save-btn" onclick="toggleCurrentPostSave()" class="active:scale-90 transition">
+                            <i data-lucide="bookmark" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Likes & Caption -->
+                    <div class="px-4 py-2 space-y-1.5">
+                        <p id="modal-likes-count" class="text-xs font-bold">142 suka</p>
+                        <p class="text-xs leading-relaxed">
+                            <span class="font-bold mr-1">xiimipa1.official</span>
+                            <span id="modal-post-caption"></span>
+                        </p>
+                        <p id="modal-post-date" class="text-[10px] text-slate-400 uppercase tracking-wide"></p>
+                    </div>
+
+                    <!-- Daftar Komentar -->
+                    <div class="px-4 pt-3 pb-6 border-t border-slate-100 dark:border-neutral-800/80">
+                        <p class="text-xs font-bold text-slate-600 dark:text-neutral-300 mb-3">Komentar Kelas</p>
+                        <div id="modal-comments-list" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Input Komentar Baru -->
+                <form onsubmit="addNewComment(event)" class="p-3 border-t border-slate-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex items-center gap-2 shrink-0">
+                    <div class="w-7 h-7 rounded-full bg-ig-blue/15 text-ig-blue font-bold text-xs flex items-center justify-center shrink-0">K</div>
+                    <input type="text" id="modal-comment-input" placeholder="Tambahkan komentar sebagai siswa..." class="flex-1 text-xs bg-slate-100 dark:bg-neutral-800 rounded-full px-4 py-2.5 focus:outline-none">
+                    <button type="submit" class="text-xs font-bold text-ig-blue px-2 py-1 active:opacity-70">Kirim</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL 3: TAMBAH POSTINGAN & STORY (IGS) BARU ==================== -->
+        <div id="create-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs hidden items-center justify-center p-4">
+            <div class="bg-white dark:bg-neutral-900 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-base">Buat Konten Baru</h3>
+                    <button onclick="closeCreateModal()" class="p-1.5 rounded-full bg-slate-100 dark:bg-neutral-800">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Switch Postingan Feed vs IG Story -->
+                <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl">
+                    <button type="button" id="mode-btn-post" onclick="setCreateMode('post')" class="py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-neutral-900 shadow-2xs transition">
+                        📸 Postingan Feed
+                    </button>
+                    <button type="button" id="mode-btn-story" onclick="setCreateMode('story')" class="py-1.5 text-xs font-bold rounded-lg text-slate-500 dark:text-neutral-400 transition">
+                        ⭕ IG Story (IGS)
+                    </button>
+                </div>
+
+                <form onsubmit="submitNewContent(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1.5">Pilih Template Foto atau Unggah Sendiri</label>
+                        <select id="new-post-preset" class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-2.5 focus:outline-none mb-2">
+                            <option value="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=800&q=80">📚 Belajar Kelompok di Perpustakaan</option>
+                            <option value="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80">🎉 Perayaan Ulang Tahun Wali Kelas</option>
+                            <option value="https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=800&q=80">⚽ Juara Futsal Classmeeting</option>
+                            <option value="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80">🧪 Praktikum Kimia di Lab</option>
+                        </select>
+                        <label class="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl border border-dashed border-slate-300 dark:border-neutral-700 text-xs font-medium text-slate-600 dark:text-neutral-300 cursor-pointer hover:bg-slate-50 dark:hover:bg-neutral-800/50">
+                            <i data-lucide="image-plus" class="w-4 h-4 text-ig-blue"></i>
+                            <span id="upload-file-label">Unggah foto dari galeri HP/Laptop...</span>
+                            <input type="file" id="new-post-file" accept="image/*" onchange="handleFileSelect(event)" class="hidden">
+                        </label>
+                    </div>
+
+                    <div>
+                        <label id="label-location-or-title" class="block text-xs font-semibold mb-1.5">Lokasi</label>
+                        <input type="text" id="new-post-location" value="Ruang Kelas XII MIPA 1" required class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-2.5 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label id="label-caption-or-text" class="block text-xs font-semibold mb-1.5">Caption Momen</label>
+                        <textarea id="new-post-caption" rows="3" required placeholder="Tulis cerita seru hari ini..." class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl p-3 focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-create-btn" class="w-full py-2.5 rounded-xl bg-ig-blue hover:bg-blue-600 text-white font-semibold text-xs shadow-lg shadow-blue-500/25 transition active:scale-95">
+                        Bagikan ke Feed Kelas ✨
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL 4: EDIT PROFIL (DENGAN SANDI ADMIN kelas123) ==================== -->
+        <div id="edit-bio-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs hidden items-center justify-center p-4">
+            <div class="bg-white dark:bg-neutral-900 w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-base">Edit Profil Kelas</h3>
+                    <button onclick="closeEditBioModal()" class="p-1.5 rounded-full bg-slate-100 dark:bg-neutral-800">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <form onsubmit="saveBioChanges(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nama Kelas & Sekolah</label>
+                        <input type="text" id="input-bio-title" required class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-2.5 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Bio & Motto Kelas</label>
+                        <textarea id="input-bio-desc" rows="3" required class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl p-3 focus:outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-amber-600 dark:text-amber-400">Sandi Admin Pengurus Kelas</label>
+                        <input type="password" id="input-admin-pass" placeholder="Masukkan sandi (petunjuk: kelas123)" required class="w-full text-xs bg-slate-100 dark:bg-neutral-800 rounded-xl px-3 py-2.5 focus:outline-none border border-amber-500/30">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-black font-semibold text-xs transition active:scale-95">
+                        Simpan Perubahan Profil
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL 5: AKTIVITAS & NOTIFIKASI KELAS (IKON HATI TOPBAR) ==================== -->
+        <div id="activity-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs hidden items-end sm:items-center justify-center">
+            <div class="bg-white dark:bg-neutral-900 w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl space-y-4 max-h-[75vh] flex flex-col">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-display font-bold text-base">Aktivitas Kelas</h3>
+                    <button onclick="closeActivityModal()" class="p-1.5 rounded-full bg-slate-100 dark:bg-neutral-800">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="overflow-y-auto no-scrollbar space-y-3 text-xs">
+                    <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-neutral-800/70">
+                        <div class="w-9 h-9 rounded-full bg-rose-500/15 text-rose-500 flex items-center justify-center font-bold shrink-0">❤️</div>
+                        <p class="flex-1"><span class="font-bold">bu.ratnasari</span> dan <span class="font-bold">28 siswa</span> menyukai foto angkatan baju bebas. <span class="text-slate-400">12m</span></p>
+                    </div>
+                    <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-neutral-800/70">
+                        <div class="w-9 h-9 rounded-full bg-amber-500/15 text-amber-500 flex items-center justify-center font-bold shrink-0">🧹</div>
+                        <p class="flex-1"><span class="font-bold">Pengingat Piket:</span> Besok giliran Regu Piket Hari Kamis bertugas ya! <span class="text-slate-400">1j</span></p>
+                    </div>
+                    <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-neutral-800/70">
+                        <div class="w-9 h-9 rounded-full bg-ig-blue/15 text-ig-blue flex items-center justify-center font-bold shrink-0">💬</div>
+                        <p class="flex-1"><span class="font-bold">dimas.pratama</span> mengomentari postingan: "Slide ke-3 muka gue belum siap woy 😭" <span class="text-slate-400">3j</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL 6: DM / OBROLAN GRUP KELAS ==================== -->
+        <div id="dm-modal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs hidden items-end sm:items-center justify-center">
+            <div class="bg-white dark:bg-neutral-900 w-full max-w-md h-[80vh] rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+                <div class="px-4 py-3 border-b border-slate-200 dark:border-neutral-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=100&q=80" class="w-8 h-8 rounded-full object-cover" alt="">
+                        <div>
+                            <p class="text-xs font-bold">Grup Kelas XII MIPA 1</p>
+                            <p class="text-[10px] text-emerald-500 font-medium">● 18 anggota sedang aktif</p>
+                        </div>
+                    </div>
+                    <button onclick="closeDmModal()" class="p-1.5 rounded-full bg-slate-100 dark:bg-neutral-800">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div id="dm-messages-list" class="flex-1 p-4 overflow-y-auto no-scrollbar space-y-3 text-xs">
+                    <div class="flex flex-col items-start max-w-[80%]">
+                        <span class="text-[10px] text-slate-400 mb-0.5 ml-1">Dimas (Ketua Kelas)</span>
+                        <div class="px-3.5 py-2 rounded-2xl rounded-tl-xs bg-slate-100 dark:bg-neutral-800">
+                            Guys besok jam pertama Matematika Peminatan Bu Ratna, jangan telat yaa! 📚
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-start max-w-[80%]">
+                        <span class="text-[10px] text-slate-400 mb-0.5 ml-1">Alya Putri</span>
+                        <div class="px-3.5 py-2 rounded-2xl rounded-tl-xs bg-slate-100 dark:bg-neutral-800">
+                            Siap! Sekalian bawa buku paket Fisika juga kan?
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end ml-auto max-w-[80%]">
+                        <div class="px-3.5 py-2 rounded-2xl rounded-tr-xs bg-ig-blue text-white">
+                            Iya betul, sama jangan lupa upload foto classmeet ke ClassGram 🔥
+                        </div>
+                    </div>
+                </div>
+                <form onsubmit="sendDmMessage(event)" class="p-3 border-t border-slate-200 dark:border-neutral-800 flex items-center gap-2">
+                    <input type="text" id="dm-input" placeholder="Kirim pesan ke grup kelas..." class="flex-1 text-xs bg-slate-100 dark:bg-neutral-800 rounded-full px-4 py-2.5 focus:outline-none">
+                    <button type="submit" class="p-2.5 rounded-full bg-ig-blue text-white active:scale-90 transition">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast-box" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+            <div id="toast-message" class="bg-slate-900/95 dark:bg-white/95 text-white dark:text-black text-xs font-medium px-4 py-2.5 rounded-full shadow-xl whitespace-nowrap">
+                Notifikasi
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==================== DATA INSTAGRAM STORIES (IGS) ====================
+        const storiesData = [
+            {
+                id: 0,
+                author: "xiimipa1.official",
+                label: "Momen Kelas",
+                subtitle: "Ruang 204 • SMAN 1 Nusantara",
+                avatar: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=200&q=80",
+                seen: false,
+                slides: [
+                    {
+                        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+                        badge: "MOMEN KELAS",
+                        heading: "Keseruan Jam Kosong XII MIPA 1",
+                        caption: "Bukan jam kosong namanya kalau nggak berubah jadi konser akustik dadakan & diskusi masa depan 😂🎶",
+                        time: "2j"
+                    },
+                    {
+                        image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=800&q=80",
+                        badge: "KEKOMPAKAN",
+                        heading: "Belajar Bareng Menjelang Ujian",
+                        caption: "Saling bantu bahas soal Fisika & Matematika biar nilai satu kelas aman semua!",
+                        time: "1j"
+                    }
+                ]
+            },
+            {
+                id: 1,
+                author: "classmeet.2026",
+                label: "Lomba",
+                subtitle: "GOR Indoor Sekolah",
+                avatar: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=200&q=80",
+                seen: false,
+                slides: [
+                    {
+                        image: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=800&q=80",
+                        badge: "JUARA 1 FUTSAL",
+                        heading: "Juara 1 Classmeeting Futsal 2026!",
+                        caption: "Skor akhir 4-2 lawan XII IPS 2! Terima kasih suporter XII MIPA 1 yang suaranya paling pecah di lapangan!",
+                        time: "4j"
+                    },
+                    {
+                        image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
+                        badge: "BEST SUPPORTER",
+                        heading: "Chant & Koreo Kelas Paling Heboh",
+                        caption: "Bawa pulang piala bergilir + penghargaan Best Supporter tahun ini 🏆🔥",
+                        time: "3j"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                author: "olimpiade.sains",
+                label: "Prestasi",
+                subtitle: "Lab Kimia & Fisika",
+                avatar: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=200&q=80",
+                seen: false,
+                slides: [
+                    {
+                        image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+                        badge: "MEDALI EMAS OSN",
+                        heading: "Lolos OSN Kimia Tingkat Provinsi!",
+                        caption: "Selamat buat Nadia & Raka yang berhasil menyabet medali emas mewakili XII MIPA 1 🧪✨",
+                        time: "6j"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                author: "regu.piket",
+                label: "Piket",
+                subtitle: "Kebersihan Kelas",
+                avatar: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=200&q=80",
+                seen: false,
+                slides: [
+                    {
+                        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+                        badge: "INFO PIKET",
+                        heading: "Kelas Bersih Juara Lomba Kebersihan!",
+                        caption: "Jangan lupa hapus papan tulis, rapikan meja, dan matikan AC sebelum pulang sekolah ya!",
+                        time: "8j"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                author: "studytour.bali",
+                label: "Study Tour",
+                subtitle: "Pantai Pandawa, Bali",
+                avatar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=200&q=80",
+                seen: true,
+                slides: [
+                    {
+                        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                        badge: "THROWBACK",
+                        heading: "Sunset Bareng di Pantai Pandawa",
+                        caption: "Dari nyanyi bareng di bus sampai foto sunset di pantai. Kenangan yang nggak bakal dilupain! 🚌🌊",
+                        time: "1h"
+                    }
+                ]
+            }
+        ];
+
+        // ==================== DATA POSTINGAN KELAS (MULTI-PHOTO CAROUSEL) ====================
+        let postsData = [
+            {
+                id: 101,
+                images: [
+                    "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "Lapangan Utama SMAN 1",
+                caption: "Foto angkatan edisi baju bebas! Geser ke samping buat liat gaya bebas anak-anak cowok yang susah diatur 😂📸 #XIIMIPA1 #PutihAbuAbu",
+                likes: 142,
+                liked: false,
+                saved: false,
+                date: "2 HARI YANG LALU",
+                comments: [
+                    { user: "dimas.pratama", text: "Slide ke-3 muka gue belum siap woy 😭" },
+                    { user: "alya.putri", text: "Keren banget hasilnyaa, save di drive ya!" },
+                    { user: "bu.ratnasari", text: "Anak-anak ibu kompak selalu ya ❤️" }
+                ]
+            },
+            {
+                id: 102,
+                images: [
+                    "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "Laboratorium Kimia",
+                caption: "Praktikum titrasi asam basa! Untung nggak ada tabung reaksi yang pecah hari ini 🧪✨",
+                likes: 98,
+                liked: true,
+                saved: true,
+                date: "5 HARI YANG LALU",
+                comments: [
+                    { user: "nadia.kimia", text: "Kelompok 2 warnanya pink pas banget!" },
+                    { user: "raka_ardiansyah", text: "Asisten lab dadakan hadir ☝️" }
+                ]
+            },
+            {
+                id: 103,
+                images: [
+                    "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "GOR Indoor Sekolah",
+                caption: "JUARA 1 FUTSAL CLASSMEETING! 🏆🔥 Perjuangan dari babak penyisihan sampai final akhirnya terbayar lunas!",
+                likes: 215,
+                liked: false,
+                saved: false,
+                date: "1 MINGGU YANG LALU",
+                comments: [
+                    { user: "bima.sakti", text: "Kiper kita MVP hari ini goks!" },
+                    { user: "sinta.dewi", text: "Suara aku sampe serak teriak-teriak 😂" }
+                ]
+            },
+            {
+                id: 104,
+                images: [
+                    "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "Ruang Kelas 204",
+                caption: "Makan-makan tumpengan abis beres ujian praktik! Nikmat mana lagi yang kau dustakan 🍛🎉",
+                likes: 164,
+                liked: false,
+                saved: false,
+                date: "2 MINGGU YANG LALU",
+                comments: [
+                    { user: "farhan.akbar", text: "Ayam gorengnya nambah 2x mantap" }
+                ]
+            },
+            {
+                id: 105,
+                images: [
+                    "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "Perpustakaan Sekolah",
+                caption: "Mode serius persiapan UTBK / SNBT. Semangat pejuang PTN 2026! 📚💪",
+                likes: 119,
+                liked: false,
+                saved: false,
+                date: "3 MINGGU YANG LALU",
+                comments: [
+                    { user: "citra.lestari", text: "Bismillah lolos pilihan pertama semua!" }
+                ]
+            },
+            {
+                id: 106,
+                images: [
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+                ],
+                location: "Pantai Pandawa, Bali",
+                caption: "Throwback Study Tour! Kangen suasana pantai dan perjalanan bus bareng kalian semua 🌊🚌",
+                likes: 189,
+                liked: false,
+                saved: false,
+                date: "1 BULAN YANG LALU",
+                comments: [
+                    { user: "kevin.wijaya", text: "Ayo agendain liburan abis lulus!" }
+                ]
+            }
+        ];
+
+        // ==================== DATA PENGURUS, ANGGOTA & JADWAL SENIN-SABTU ====================
+        const pengurusData = [
+            { role: "Ketua Kelas", name: "Dimas Pratama", ig: "@dimas.pratama", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" },
+            { role: "Wakil Ketua", name: "Alya Putri", ig: "@alya.putri", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" },
+            { role: "Sekretaris", name: "Nadia Rahma", ig: "@nadia.kimia", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80" },
+            { role: "Bendahara", name: "Raka Ardiansyah", ig: "@raka_ardiansyah", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" }
+        ];
+
+        const anggotaData = [
+            { absen: "01", name: "Aditya Nugroho", role: "Seksi Olahraga", ig: "@adit.nugroho" },
+            { absen: "02", name: "Alya Putri Maharani", role: "Wakil Ketua Kelas", ig: "@alya.putri" },
+            { absen: "03", name: "Bima Sakti Putra", role: "Kapten Futsal", ig: "@bima.sakti" },
+            { absen: "04", name: "Citra Lestari", role: "Seksi Kebersihan", ig: "@citra.lestari" },
+            { absen: "05", name: "Dimas Pratama", role: "Ketua Kelas", ig: "@dimas.pratama" },
+            { absen: "06", name: "Farhan Akbar", role: "Seksi Dokumentasi", ig: "@farhan.akbar" },
+            { absen: "07", name: "Gilang Ramadhan", role: "Seksi Keamanan", ig: "@gilang.rmdhn" },
+            { absen: "08", name: "Kevin Wijaya", role: "Seksi IT & Proyektor", ig: "@kevin.wijaya" },
+            { absen: "09", name: "Nadia Rahma Putri", role: "Sekretaris 1", ig: "@nadia.kimia" },
+            { absen: "10", name: "Raka Ardiansyah", role: "Bendahara 1", ig: "@raka_ardiansyah" },
+            { absen: "11", name: "Sinta Dewi", role: "Sekretaris 2", ig: "@sinta.dewi" },
+            { absen: "12", name: "Tari Anindya", role: "Bendahara 2", ig: "@tari.anindya" }
+        ];
+
+        const scheduleData = {
+            "Senin": {
+                piket: ["Dimas", "Alya", "Raka", "Nabila", "Aditya"],
+                mapel: [
+                    { time: "07:00 - 07:45", subject: "Upacara Bendera", teacher: "Pembina Upacara", room: "Lapangan" },
+                    { time: "07:45 - 09:15", subject: "Matematika Peminatan", teacher: "Bu Ratna Sari, S.Pd.", room: "R. 204" },
+                    { time: "09:30 - 11:00", subject: "Fisika", teacher: "Pak Hendra, M.Pd.", room: "Lab Fisika" },
+                    { time: "11:00 - 12:30", subject: "Bahasa Indonesia", teacher: "Bu Dewi Anggraini", room: "R. 204" }
+                ]
+            },
+            "Selasa": {
+                piket: ["Farhan", "Citra", "Bima", "Sinta", "Kevin"],
+                mapel: [
+                    { time: "07:00 - 08:30", subject: "Kimia", teacher: "Bu Maya Kusuma, S.Si.", room: "Lab Kimia" },
+                    { time: "08:30 - 10:00", subject: "Biologi", teacher: "Pak Budi Santoso", room: "R. 204" },
+                    { time: "10:15 - 11:45", subject: "Bahasa Inggris", teacher: "Mr. Rizky Pratama", room: "R. 204" },
+                    { time: "12:30 - 14:00", subject: "Sejarah Indonesia", teacher: "Bu Sri Wahyuni", room: "R. 204" }
+                ]
+            },
+            "Rabu": {
+                piket: ["Gilang", "Tari", "Nadia", "Bagas", "Putri"],
+                mapel: [
+                    { time: "07:00 - 08:30", subject: "Matematika Wajib", teacher: "Bu Ratna Sari, S.Pd.", room: "R. 204" },
+                    { time: "08:30 - 10:00", subject: "PJOK / Olahraga", teacher: "Pak Agung Nugroho", room: "GOR" },
+                    { time: "10:15 - 11:45", subject: "Seni Budaya", teacher: "Bu Larasati", room: "Ruang Seni" }
+                ]
+            },
+            "Kamis": {
+                piket: ["Fajar", "Intan", "Reza", "Vina", "Deni"],
+                mapel: [
+                    { time: "07:00 - 08:30", subject: "Fisika", teacher: "Pak Hendra, M.Pd.", room: "R. 204" },
+                    { time: "08:30 - 10:00", subject: "Kimia", teacher: "Bu Maya Kusuma, S.Si.", room: "R. 204" },
+                    { time: "10:15 - 12:00", subject: "PPKn", teacher: "Pak Bambang", room: "R. 204" }
+                ]
+            },
+            "Jumat": {
+                piket: ["Semua Siswa (Jumat Bersih)"],
+                mapel: [
+                    { time: "07:00 - 07:45", subject: "Jumat Bersih & Senam", teacher: "Wali Kelas", room: "Area Kelas" },
+                    { time: "07:45 - 09:15", subject: "Pendidikan Agama", teacher: "Pak Ust. Fauzi", room: "R. 204" },
+                    { time: "09:30 - 11:00", subject: "Bimbingan Konseling / SNBT", teacher: "Bu Ratna Sari, S.Pd.", room: "R. 204" }
+                ]
+            },
+            "Sabtu": {
+                piket: ["Regu Ekstrakurikuler"],
+                mapel: [
+                    { time: "07:30 - 09:30", subject: "Ekstrakurikuler & Pramuka", teacher: "Pembina Ekskul", room: "Lapangan" },
+                    { time: "09:30 - 11:30", subject: "Klub Olimpiade MIPA & Futsal", teacher: "Tim Pelatih", room: "GOR / Lab" }
+                ]
+            }
+        };
+
+        // ==================== STATE APLIKASI ====================
+        let currentProfileTab = 0;
+        let currentStoryGroupIndex = 0;
+        let currentStorySlideIndex = 0;
+        let storyTimer = null;
+        let storyProgress = 0;
+        let isStoryPaused = false;
+
+        let activeModalPostId = null;
+        let activeCarouselSlide = 0;
+        let feedCarouselIndices = {}; // Menyimpan indeks slide aktif tiap post di timeline
+        let selectedDay = "Senin";
+        let createContentMode = "post";
+        let uploadedImageDataUrl = null;
+
+        // ==================== INISIALISASI ====================
+        window.onload = () => {
+            renderTopStoriesBar();
+            renderProfileHighlights();
+            enableHorizontalDragScroll('top-stories-bar');
+            enableHorizontalDragScroll('profile-highlights-bar');
+
+            renderHomeFeed();
+            renderPostsGrid();
+            renderMembers();
+            renderSchedule("Senin");
+
+            setupTabSwipeGesture();
+            setupScheduleSwipeGesture();
+            setupModalCarouselSwipe();
+            setupStoryTouchControls();
+            lucide.createIcons();
+        };
+
+        // ==================== TEMA GELAP / TERANG ====================
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            openToast(isDark ? 'Mode Gelap aktif 🌙' : 'Mode Terang aktif ☀️');
+        }
+
+        // ==================== BARISAN INSTAGRAM STORIES (IGS) ====================
+        function renderTopStoriesBar() {
+            const container = document.getElementById('top-stories-bar');
+            const addStoryItem = `
+                <div onclick="openCreateModal('story')" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer snap-start group">
+                    <div class="relative w-[66px] h-[66px] rounded-full p-[2px] border border-slate-200 dark:border-neutral-800 group-active:scale-95 transition-transform">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=150&q=80"
+                             class="w-full h-full rounded-full object-cover opacity-90" alt="Story Kelas">
+                        <span class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-ig-blue text-white border-2 border-white dark:border-black flex items-center justify-center shadow-sm">
+                            <i data-lucide="plus" class="w-3 h-3 stroke-[3]"></i>
+                        </span>
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-600 dark:text-neutral-300 max-w-[70px] truncate">Story Kelas +</span>
+                </div>
+            `;
+
+            const storyItems = storiesData.map((item, idx) => `
+                <div onclick="openStory(${idx})" class="flex flex-col items-center gap-1 shrink-0 cursor-pointer snap-start group">
+                    <div class="${item.seen ? 'story-ring-seen' : 'story-ring'} rounded-full group-active:scale-95 transition-transform">
+                        <div class="bg-white dark:bg-black p-[2px] rounded-full">
+                            <img src="${item.avatar}" onerror="this.src='https://placehold.co/150x150/8b5cf6/ffffff?text=IGS'"
+                                 class="w-[60px] h-[60px] rounded-full object-cover pointer-events-none" alt="${item.label}">
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-medium ${item.seen ? 'text-slate-400 dark:text-neutral-500' : 'text-slate-800 dark:text-neutral-200'} max-w-[70px] truncate">
+                        ${item.label}
+                    </span>
+                </div>
+            `).join('');
+
+            container.innerHTML = addStoryItem + storyItems;
+            lucide.createIcons();
+        }
+
+        function renderProfileHighlights() {
+            const container = document.getElementById('profile-highlights-bar');
+            container.innerHTML = storiesData.map((item, idx) => `
+                <div onclick="openStory(${idx})" class="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer snap-start group">
+                    <div class="${item.seen ? 'story-ring-seen' : 'story-ring'} rounded-full group-active:scale-95 transition-transform">
+                        <div class="bg-white dark:bg-black p-[2px] rounded-full">
+                            <img src="${item.avatar}" class="w-[58px] h-[58px] rounded-full object-cover pointer-events-none" alt="${item.label}">
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-medium text-slate-700 dark:text-neutral-300 max-w-[66px] truncate">${item.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function enableHorizontalDragScroll(elementId) {
+            const slider = document.getElementById(elementId);
+            if (!slider) return;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; });
+            slider.addEventListener('mouseup', () => { isDown = false; });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        // ==================== FULLSCREEN STORY VIEWER (3D CUBE SWIPE, HOLD PAUSE, TAP KIRI/KANAN) ====================
+        function openStory(groupIdx) {
+            currentStoryGroupIndex = groupIdx;
+            currentStorySlideIndex = 0;
+            isStoryPaused = false;
+            storiesData[groupIdx].seen = true;
+            renderTopStoriesBar();
+            renderProfileHighlights();
+
+            const wrapper = document.getElementById('story-swipe-wrapper');
+            wrapper.style.transition = 'none';
+            wrapper.style.transform = 'translateX(0px) translateY(0px) rotateY(0deg) scale(1)';
+            wrapper.style.opacity = '1';
+
+            const modal = document.getElementById('story-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            renderStorySlide();
+        }
+
+        function closeStory() {
+            clearInterval(storyTimer);
+            isStoryPaused = false;
+            setStoryUiVisibility(true);
+            const modal = document.getElementById('story-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setStoryUiVisibility(visible) {
+            const opacity = visible ? '1' : '0';
+            document.getElementById('story-top-ui').style.opacity = opacity;
+            document.getElementById('story-bottom-ui').style.opacity = opacity;
+            document.getElementById('story-caption-ui').style.opacity = opacity;
+        }
+
+        function pauseStory(hideUi = true) {
+            isStoryPaused = true;
+            if (hideUi) setStoryUiVisibility(false);
+            updatePauseButtonIcon();
+        }
+
+        function resumeStory() {
+            isStoryPaused = false;
+            setStoryUiVisibility(true);
+            updatePauseButtonIcon();
+        }
+
+        function toggleStoryPauseButton() {
+            if (isStoryPaused) {
+                resumeStory();
+            } else {
+                pauseStory(false);
+            }
+        }
+
+        function updatePauseButtonIcon() {
+            const btn = document.getElementById('story-pause-btn');
+            if (!btn) return;
+            btn.innerHTML = isStoryPaused
+                ? `<i data-lucide="play" class="w-4 h-4"></i>`
+                : `<i data-lucide="pause" class="w-4 h-4"></i>`;
+            lucide.createIcons();
+        }
+
+        function renderStorySlide() {
+            clearInterval(storyTimer);
+            const group = storiesData[currentStoryGroupIndex];
+            const slide = group.slides[currentStorySlideIndex];
+
+            document.getElementById('story-avatar').src = group.avatar;
+            document.getElementById('story-author').textContent = group.author;
+            document.getElementById('story-time').textContent = slide.time;
+            document.getElementById('story-subtitle').textContent = group.subtitle;
+            document.getElementById('story-image').src = slide.image;
+            document.getElementById('story-badge').textContent = slide.badge;
+            document.getElementById('story-heading').textContent = slide.heading;
+            document.getElementById('story-caption').textContent = slide.caption;
+
+            // Render segmented progress bars
+            const barsContainer = document.getElementById('story-progress-bars');
+            barsContainer.innerHTML = group.slides.map((_, i) => `
+                <div class="h-[2.5px] flex-1 bg-white/30 rounded-full overflow-hidden">
+                    <div id="story-bar-${i}" class="h-full bg-white transition-all duration-75" style="width: ${i < currentStorySlideIndex ? '100%' : '0%'}"></div>
+                </div>
+            `).join('');
+
+            storyProgress = 0;
+            updatePauseButtonIcon();
+
+            storyTimer = setInterval(() => {
+                if (isStoryPaused) return;
+                storyProgress += 2;
+                const activeBar = document.getElementById(`story-bar-${currentStorySlideIndex}`);
+                if (activeBar) activeBar.style.width = `${storyProgress}%`;
+
+                if (storyProgress >= 100) {
+                    nextStorySlide();
+                }
+            }, 85);
+            lucide.createIcons();
+        }
+
+        function switchStoryGroup(step) {
+            const nextIdx = currentStoryGroupIndex + step;
+            if (nextIdx >= 0 && nextIdx < storiesData.length) {
+                const wrapper = document.getElementById('story-swipe-wrapper');
+                const outAngle = step > 0 ? -38 : 38;
+                const outX = step > 0 ? '-100%' : '100%';
+
+                wrapper.style.transition = 'transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease-out';
+                wrapper.style.transform = `translateX(${outX}) rotateY(${outAngle}deg)`;
+                wrapper.style.opacity = '0.35';
+
+                setTimeout(() => {
+                    currentStoryGroupIndex = nextIdx;
+                    currentStorySlideIndex = 0;
+                    storiesData[nextIdx].seen = true;
+                    renderTopStoriesBar();
+                    renderProfileHighlights();
+                    renderStorySlide();
+
+                    wrapper.style.transition = 'none';
+                    wrapper.style.transform = `translateX(${step > 0 ? '85%' : '-85%'}) rotateY(${step > 0 ? 35 : -35}deg)`;
+                    void wrapper.offsetWidth;
+
+                    wrapper.style.transition = 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease-out';
+                    wrapper.style.transform = 'translateX(0px) rotateY(0deg)';
+                    wrapper.style.opacity = '1';
+                }, 200);
+            } else {
+                closeStory();
+            }
+        }
+
+        function nextStorySlide() {
+            const group = storiesData[currentStoryGroupIndex];
+            if (currentStorySlideIndex < group.slides.length - 1) {
+                currentStorySlideIndex++;
+                renderStorySlide();
+            } else {
+                switchStoryGroup(1);
+            }
+        }
+
+        function prevStorySlide() {
+            if (currentStorySlideIndex > 0) {
+                currentStorySlideIndex--;
+                renderStorySlide();
+            } else {
+                switchStoryGroup(-1);
+            }
+        }
+
+        function setupStoryTouchControls() {
+            const area = document.getElementById('story-touch-area');
+            const wrapper = document.getElementById('story-swipe-wrapper');
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchStartTime = 0;
+            let isDragging = false;
+            let holdTimeout = null;
+            let heldAndPaused = false;
+
+            const handleStart = (clientX, clientY) => {
+                touchStartX = clientX;
+                touchStartY = clientY;
+                touchStartTime = Date.now();
+                isDragging = true;
+                heldAndPaused = false;
+                wrapper.style.transition = 'none';
+
+                // Press & hold > 220ms menjeda progress & menyembunyikan UI sementara
+                holdTimeout = setTimeout(() => {
+                    heldAndPaused = true;
+                    pauseStory(true);
+                }, 220);
+            };
+
+            const handleMove = (clientX, clientY) => {
+                if (!isDragging) return;
+                const dx = clientX - touchStartX;
+                const dy = clientY - touchStartY;
+
+                if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                    clearTimeout(holdTimeout);
+                }
+
+                // Efek 3D Cube / Smooth Horizontal Drag mengikuti jari
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    const rotateY = Math.max(-35, Math.min(35, dx * 0.08));
+                    wrapper.style.transform = `translateX(${dx * 0.9}px) rotateY(${rotateY}deg)`;
+                } else if (dy > 0) {
+                    // Swipe down untuk menutup Story
+                    const scale = Math.max(0.84, 1 - dy / 950);
+                    wrapper.style.transform = `translateY(${dy * 0.9}px) scale(${scale})`;
+                }
+            };
+
+            const handleEnd = (clientX, clientY) => {
+                if (!isDragging) return;
+                isDragging = false;
+                clearTimeout(holdTimeout);
+
+                if (heldAndPaused) {
+                    resumeStory();
+                }
+
+                const dx = clientX - touchStartX;
+                const dy = clientY - touchStartY;
+                const elapsed = Date.now() - touchStartTime;
+
+                wrapper.style.transition = 'transform 0.26s cubic-bezier(0.25, 1, 0.5, 1)';
+                wrapper.style.transform = 'translateX(0px) translateY(0px) rotateY(0deg) scale(1)';
+
+                // Swipe ke bawah menutup story
+                if (dy > 90 && Math.abs(dx) < 65) {
+                    closeStory();
+                    return;
+                }
+
+                // Swipe kiri/kanan berpindah ke akun/kategori Story berikutnya/sebelumnya
+                if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)) {
+                    if (dx < 0) switchStoryGroup(1);
+                    else switchStoryGroup(-1);
+                    return;
+                }
+
+                // Tap cepat sisi kiri/kanan layar
+                if (!heldAndPaused && elapsed < 260 && Math.abs(dx) < 12 && Math.abs(dy) < 12) {
+                    const rect = area.getBoundingClientRect();
+                    const clickX = clientX - rect.left;
+                    if (clickX < rect.width * 0.35) {
+                        prevStorySlide();
+                    } else {
+                        nextStorySlide();
+                    }
+                }
+            };
+
+            area.addEventListener('touchstart', e => handleStart(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+            area.addEventListener('touchmove', e => handleMove(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+            area.addEventListener('touchend', e => handleEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
+
+            area.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY));
+            window.addEventListener('mousemove', e => { if (isDragging) handleMove(e.clientX, e.clientY); });
+            window.addEventListener('mouseup', e => { if (isDragging) handleEnd(e.clientX, e.clientY); });
+        }
+
+        function triggerStoryReaction(emoji) {
+            const layer = document.getElementById('story-emoji-layer');
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('span');
+                el.textContent = emoji;
+                el.className = 'absolute bottom-24 text-3xl animate-float-emoji';
+                el.style.left = `${20 + Math.random() * 60}%`;
+                el.style.animationDelay = `${i * 0.07}s`;
+                layer.appendChild(el);
+                setTimeout(() => el.remove(), 1500);
+            }
+            openToast(`Reaksi ${emoji} terkirim ke story kelas!`);
+        }
+
+        function sendStoryReply() {
+            const input = document.getElementById('story-reply-input');
+            if (!input.value.trim()) return;
+            openToast(`Pesan terkirim ke IGS: "${input.value}" 💬`);
+            input.value = '';
+        }
+
+        // ==================== RENDER FEED BERANDA & PROFIL (CAROUSEL SWIPEABLE) ====================
+        function buildFeedPostHTML(post) {
+            const currentSlide = feedCarouselIndices[post.id] || 0;
+            const totalSlides = post.images.length;
+
+            return `
+                <article class="pb-3.5 bg-white dark:bg-black">
+                    <!-- Header Post -->
+                    <div class="px-3.5 py-2.5 flex items-center justify-between">
+                        <div onclick="switchBottomNav('profile')" class="flex items-center gap-2.5 cursor-pointer">
+                            <div class="story-ring rounded-full p-[1.5px]">
+                                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=100&q=80" class="w-8 h-8 rounded-full object-cover border border-white dark:border-black" alt="">
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1">
+                                    <p class="text-xs font-bold leading-none">xiimipa1.official</p>
+                                    <i data-lucide="badge-check" class="w-3.5 h-3.5 text-ig-blue fill-ig-blue/15"></i>
+                                </div>
+                                <p class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">${post.location}</p>
+                            </div>
+                        </div>
+                        <button onclick="openPostModal(${post.id})" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-neutral-800 text-slate-500">
+                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Carousel Foto Multi-Slide dengan Swipe Kiri/Kanan & Double-Tap Like -->
+                    <div data-post-id="${post.id}"
+                         ontouchstart="handleFeedTouchStart(event, ${post.id})"
+                         ontouchend="handleFeedTouchEnd(event, ${post.id}, this)"
+                         ondblclick="doubleTapFeedLike(${post.id}, this)"
+                         class="relative w-full aspect-square bg-slate-100 dark:bg-neutral-900 overflow-hidden cursor-pointer select-none">
+                        
+                        <div id="feed-track-${post.id}" class="flex h-full transition-transform duration-300 ease-out" style="transform: translateX(-${currentSlide * 100}%)">
+                            ${post.images.map(img => `
+                                <div class="w-full h-full shrink-0">
+                                    <img src="${img}" onerror="this.src='https://placehold.co/600x600/334155/ffffff?text=Kenangan+Kelas'" class="w-full h-full object-cover pointer-events-none" alt="Postingan">
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${totalSlides > 1 ? `
+                            <!-- Badge Counter 1/3 di Pojok Kanan Atas -->
+                            <div id="feed-badge-${post.id}" class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/65 text-white text-[11px] font-semibold backdrop-blur-xs">
+                                ${currentSlide + 1}/${totalSlides}
+                            </div>
+                            <!-- Tombol Geser Carousel Desktop -->
+                            <button onclick="event.stopPropagation(); stepFeedCarousel(${post.id}, -1)" class="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 text-white items-center justify-center backdrop-blur-xs">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); stepFeedCarousel(${post.id}, 1)" class="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/50 text-white items-center justify-center backdrop-blur-xs">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        ` : ''}
+
+                        <!-- Animasi Hati Double-Tap -->
+                        <div class="feed-heart-anim pointer-events-none absolute inset-0 flex items-center justify-center opacity-0">
+                            <i data-lucide="heart" class="w-24 h-24 text-white fill-rose-500 drop-shadow-2xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- Indikator Titik Biru Carousel -->
+                    ${totalSlides > 1 ? `
+                        <div id="feed-dots-${post.id}" class="flex justify-center gap-1.5 pt-2">
+                            ${post.images.map((_, idx) => `
+                                <span class="h-1.5 rounded-full transition-all ${idx === currentSlide ? 'w-3.5 bg-ig-blue' : 'w-1.5 bg-slate-300 dark:bg-neutral-700'}"></span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <!-- Action Bar: Like, Komentar, Bagikan, Simpan -->
+                    <div class="px-3.5 pt-2.5 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button onclick="toggleFeedLike(${post.id})" class="active:scale-90 transition">
+                                <i data-lucide="heart" class="w-6 h-6 ${post.liked ? 'fill-rose-500 text-rose-500 animate-pop' : ''}"></i>
+                            </button>
+                            <button onclick="openPostModal(${post.id})" class="active:scale-90 transition">
+                                <i data-lucide="message-circle" class="w-6 h-6"></i>
+                            </button>
+                            <button onclick="openToast('Link postingan disalin! 🔗')" class="active:scale-90 transition">
+                                <i data-lucide="send" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                        <button onclick="toggleFeedSave(${post.id})" class="active:scale-90 transition">
+                            <i data-lucide="bookmark" class="w-6 h-6 ${post.saved ? 'fill-slate-900 dark:fill-white' : ''}"></i>
+                        </button>
+                    </div>
+
+                    <!-- Likes, Caption & Bottom-Sheet Komentar -->
+                    <div class="px-3.5 pt-1.5 space-y-1">
+                        <p class="text-xs font-bold">${post.likes} suka</p>
+                        <p class="text-xs leading-relaxed">
+                            <span class="font-bold mr-1">xiimipa1.official</span>${post.caption}
+                        </p>
+                        <button onclick="openPostModal(${post.id})" class="text-xs text-slate-400 dark:text-neutral-500 block pt-0.5 hover:underline">
+                            Lihat semua ${post.comments.length} komentar...
+                        </button>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wide pt-0.5">${post.date}</p>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderHomeFeed() {
+            const html = postsData.map(buildFeedPostHTML).join('');
+            document.getElementById('home-feed-list').innerHTML = html;
+            document.getElementById('profile-posts-feed').innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Gestur Swipe Carousel & Double-Tap pada setiap Postingan di Feed
+        let feedTouchStartX = 0;
+        let feedLastTapTime = 0;
+
+        function handleFeedTouchStart(e, postId) {
+            feedTouchStartX = e.touches[0].clientX;
+        }
+
+        function handleFeedTouchEnd(e, postId, container) {
+            const diffX = e.changedTouches[0].clientX - feedTouchStartX;
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+
+            if (Math.abs(diffX) > 40 && post.images.length > 1) {
+                if (diffX < 0) stepFeedCarousel(postId, 1);
+                else stepFeedCarousel(postId, -1);
+                return;
+            }
+
+            const now = Date.now();
+            if (now - feedLastTapTime < 280) {
+                doubleTapFeedLike(postId, container);
+            }
+            feedLastTapTime = now;
+        }
+
+        function stepFeedCarousel(postId, step) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post || post.images.length <= 1) return;
+            const current = feedCarouselIndices[postId] || 0;
+            const next = Math.max(0, Math.min(post.images.length - 1, current + step));
+            feedCarouselIndices[postId] = next;
+            renderHomeFeed();
+        }
+
+        function doubleTapFeedLike(postId, container) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+            if (!post.liked) {
+                post.liked = true;
+                post.likes++;
+            }
+            const heart = container.querySelector('.feed-heart-anim');
+            if (heart) {
+                heart.classList.remove('animate-heart-burst');
+                void heart.offsetWidth;
+                heart.classList.add('animate-heart-burst');
+            }
+            setTimeout(() => {
+                renderHomeFeed();
+                renderPostsGrid();
+            }, 600);
+        }
+
+        function toggleFeedLike(postId) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+            renderHomeFeed();
+            renderPostsGrid();
+        }
+
+        function toggleFeedSave(postId) {
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+            post.saved = !post.saved;
+            openToast(post.saved ? 'Disimpan ke koleksi kelas 🔖' : 'Dihapus dari simpanan');
+            renderHomeFeed();
+        }
+
+        // ==================== RENDER GRID 3x3 DI PROFIL ====================
+        function renderPostsGrid() {
+            const grid = document.getElementById('posts-grid');
+            document.getElementById('stat-posts').textContent = postsData.length;
+
+            grid.innerHTML = postsData.map(post => `
+                <div onclick="openPostModal(${post.id})" class="relative aspect-square bg-slate-100 dark:bg-neutral-900 overflow-hidden cursor-pointer group">
+                    <img src="${post.images[0]}" onerror="this.src='https://placehold.co/400x400/334155/ffffff?text=Foto+Kelas'"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="Postingan Kelas">
+                    ${post.images.length > 1 ? `
+                        <div class="absolute top-2 right-2 text-white drop-shadow-md">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        </div>
+                    ` : ''}
+                    <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-white text-xs font-bold">
+                        <span class="flex items-center gap-1"><i data-lucide="heart" class="w-4 h-4 fill-white"></i> ${post.likes}</span>
+                        <span class="flex items-center gap-1"><i data-lucide="message-circle" class="w-4 h-4 fill-white"></i> ${post.comments.length}</span>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleProfilePostsLayout(mode) {
+            const gridEl = document.getElementById('posts-grid');
+            const feedEl = document.getElementById('profile-posts-feed');
+            const btnGrid = document.getElementById('layout-btn-grid');
+            const btnFeed = document.getElementById('layout-btn-feed');
+
+            if (mode === 'grid') {
+                gridEl.classList.remove('hidden');
+                feedEl.classList.add('hidden');
+                btnGrid.className = 'px-2 py-1 rounded-md bg-white dark:bg-neutral-900 text-[11px] font-bold shadow-2xs transition';
+                btnFeed.className = 'px-2 py-1 rounded-md text-[11px] font-medium text-slate-500 dark:text-neutral-400 transition';
+            } else {
+                gridEl.classList.add('hidden');
+                feedEl.classList.remove('hidden');
+                btnFeed.className = 'px-2 py-1 rounded-md bg-white dark:bg-neutral-900 text-[11px] font-bold shadow-2xs transition';
+                btnGrid.className = 'px-2 py-1 rounded-md text-[11px] font-medium text-slate-500 dark:text-neutral-400 transition';
+            }
+        }
+
+        // ==================== MODAL DETAIL POSTINGAN & CAROUSEL ====================
+        function openPostModal(postId) {
+            activeModalPostId = postId;
+            activeCarouselSlide = feedCarouselIndices[postId] || 0;
+            const post = postsData.find(p => p.id === postId);
+            if (!post) return;
+
+            document.getElementById('modal-post-location').textContent = post.location;
+            document.getElementById('modal-post-caption').textContent = post.caption;
+            document.getElementById('modal-post-date').textContent = post.date;
+
+            const track = document.getElementById('modal-carousel-track');
+            track.innerHTML = post.images.map(img => `
+                <div class="w-full h-full shrink-0">
+                    <img src="${img}" onerror="this.src='https://placehold.co/600x600/334155/ffffff?text=Kenangan+Kelas'" class="w-full h-full object-cover" alt="Foto Kenangan">
+                </div>
+            `).join('');
+
+            const hasMultiple = post.images.length > 1;
+            document.getElementById('carousel-prev').classList.toggle('hidden', !hasMultiple);
+            document.getElementById('carousel-next').classList.toggle('hidden', !hasMultiple);
+            document.getElementById('carousel-counter').classList.toggle('hidden', !hasMultiple);
+
+            updateCarouselUI();
+            updateModalLikeAndComments();
+
+            const modal = document.getElementById('post-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closePostModal() {
+            const modal = document.getElementById('post-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            renderHomeFeed();
+            renderPostsGrid();
+        }
+
+        function moveModalCarousel(step) {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+            const total = post.images.length;
+            activeCarouselSlide = (activeCarouselSlide + step + total) % total;
+            feedCarouselIndices[activeModalPostId] = activeCarouselSlide;
+            updateCarouselUI();
+        }
+
+        function updateCarouselUI() {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+            const track = document.getElementById('modal-carousel-track');
+            track.style.transform = `translateX(-${activeCarouselSlide * 100}%)`;
+
+            const counter = document.getElementById('carousel-counter');
+            counter.textContent = `${activeCarouselSlide + 1}/${post.images.length}`;
+
+            const dots = document.getElementById('carousel-dots');
+            if (post.images.length > 1) {
+                dots.innerHTML = post.images.map((_, i) => `
+                    <span class="h-1.5 rounded-full transition-all ${i === activeCarouselSlide ? 'w-4 bg-ig-blue' : 'w-1.5 bg-slate-300 dark:bg-neutral-700'}"></span>
+                `).join('');
+            } else {
+                dots.innerHTML = '';
+            }
+        }
+
+        function setupModalCarouselSwipe() {
+            const container = document.getElementById('modal-carousel-container');
+            let startX = 0;
+            let lastTap = 0;
+
+            container.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', e => {
+                const diffX = e.changedTouches[0].clientX - startX;
+                const post = postsData.find(p => p.id === activeModalPostId);
+                if (!post) return;
+
+                if (Math.abs(diffX) > 45 && post.images.length > 1) {
+                    if (diffX < 0 && activeCarouselSlide < post.images.length - 1) {
+                        activeCarouselSlide++;
+                        updateCarouselUI();
+                    } else if (diffX > 0 && activeCarouselSlide > 0) {
+                        activeCarouselSlide--;
+                        updateCarouselUI();
+                    }
+                    return;
+                }
+
+                const now = Date.now();
+                if (now - lastTap < 300) {
+                    triggerModalDoubleTapLike();
+                }
+                lastTap = now;
+            });
+
+            container.addEventListener('dblclick', () => triggerModalDoubleTapLike());
+        }
+
+        function triggerModalDoubleTapLike() {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+            if (!post.liked) {
+                post.liked = true;
+                post.likes++;
+                updateModalLikeAndComments();
+            }
+            const heart = document.getElementById('modal-heart-overlay');
+            heart.classList.remove('animate-heart-burst');
+            void heart.offsetWidth;
+            heart.classList.add('animate-heart-burst');
+        }
+
+        function toggleCurrentPostLike() {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+            updateModalLikeAndComments();
+        }
+
+        function toggleCurrentPostSave() {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+            post.saved = !post.saved;
+            openToast(post.saved ? 'Postingan disimpan 🔖' : 'Batal menyimpan postingan');
+            updateModalLikeAndComments();
+        }
+
+        function updateModalLikeAndComments() {
+            const post = postsData.find(p => p.id === activeModalPostId);
+            if (!post) return;
+
+            document.getElementById('modal-likes-count').textContent = `${post.likes} suka`;
+            document.getElementById('modal-like-btn').innerHTML = `<i data-lucide="heart" class="w-6 h-6 ${post.liked ? 'fill-rose-500 text-rose-500 animate-pop' : ''}"></i>`;
+            document.getElementById('modal-save-btn').innerHTML = `<i data-lucide="bookmark" class="w-6 h-6 ${post.saved ? 'fill-slate-900 dark:fill-white' : ''}"></i>`;
+
+            const commentsList = document.getElementById('modal-comments-list');
+            commentsList.innerHTML = post.comments.map(c => `
+                <div class="flex items-start gap-2.5 text-xs">
+                    <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-neutral-800 flex items-center justify-center font-bold text-[10px] shrink-0 uppercase">
+                        ${c.user.charAt(0)}
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-bold mr-1.5">${c.user}</span>
+                        <span class="text-slate-700 dark:text-neutral-300">${c.text}</span>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function addNewComment(e) {
+            e.preventDefault();
+            const input = document.getElementById('modal-comment-input');
+            const text = input.value.trim();
+            if (!text || !activeModalPostId) return;
+
+            const post = postsData.find(p => p.id === activeModalPostId);
+            post.comments.push({ user: "siswa.xiimipa1", text });
+            input.value = '';
+            updateModalLikeAndComments();
+            openToast('Komentar terkirim! 💬');
+        }
+
+        // ==================== TAB PROFIL & GESTUR SWIPE KIRI/KANAN ====================
+        function switchProfileTab(index) {
+            currentProfileTab = index;
+            const track = document.getElementById('swipe-tabs-track');
+            const indicator = document.getElementById('tab-indicator');
+
+            track.style.transform = `translateX(-${index * 33.3333}%)`;
+            indicator.style.transform = `translateX(${index * 100}%)`;
+
+            [0, 1, 2].forEach(i => {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (i === index) {
+                    btn.classList.remove('text-slate-400', 'dark:text-neutral-500');
+                    btn.classList.add('text-slate-900', 'dark:text-white');
+                } else {
+                    btn.classList.add('text-slate-400', 'dark:text-neutral-500');
+                    btn.classList.remove('text-slate-900', 'dark:text-white');
+                }
+            });
+        }
+
+        function setupTabSwipeGesture() {
+            const viewport = document.getElementById('swipe-tabs-viewport');
+            let startX = 0;
+            let startY = 0;
+
+            viewport.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', e => {
+                // Jangan tabrakan jika sedang menggeser area jadwal hari
+                if (e.target.closest('#schedule-swipe-area')) return;
+
+                const diffX = e.changedTouches[0].clientX - startX;
+                const diffY = e.changedTouches[0].clientY - startY;
+
+                if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+                    if (diffX < 0 && currentProfileTab < 2) {
+                        switchProfileTab(currentProfileTab + 1);
+                    } else if (diffX > 0 && currentProfileTab > 0) {
+                        switchProfileTab(currentProfileTab - 1);
+                    }
+                }
+            }, { passive: true });
+        }
+
+        // ==================== JADWAL PELAJARAN & PIKET (SWIPE ANTAR HARI SENIN-SABTU) ====================
+        function renderSchedule(day) {
+            selectedDay = day;
+            const days = Object.keys(scheduleData);
+            const selector = document.getElementById('day-selector');
+            selector.innerHTML = days.map(d => `
+                <button onclick="renderSchedule('${d}')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 transition active:scale-95 ${
+                    d === selectedDay 
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-xs' 
+                    : 'bg-slate-100 dark:bg-neutral-800 text-slate-600 dark:text-neutral-300'
+                }">
+                    ${d}
+                </button>
+            `).join('');
+
+            const info = scheduleData[day];
+            const content = document.getElementById('schedule-swipe-area');
+            content.innerHTML = `
+                <!-- Regu Piket Hari Ini -->
+                <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-bold text-xs">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> Regu Piket Hari ${day}
+                        </span>
+                        <span class="text-[10px] text-slate-400">Geser kartu ↔️</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${info.piket.map(nama => `
+                            <span class="px-2.5 py-1 rounded-lg bg-white dark:bg-neutral-900 text-xs font-medium shadow-2xs">${nama}</span>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Mata Pelajaran -->
+                <div class="space-y-2.5">
+                    ${info.mapel.map(m => `
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-neutral-900 border border-slate-200/70 dark:border-neutral-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] font-bold text-ig-blue">${m.time}</span>
+                                <h4 class="font-bold text-sm mt-0.5">${m.subject}</h4>
+                                <p class="text-xs text-slate-500 dark:text-neutral-400">${m.teacher}</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-xl bg-slate-200/70 dark:bg-neutral-800 text-[11px] font-semibold">
+                                ${m.room}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function setupScheduleSwipeGesture() {
+            const area = document.getElementById('schedule-swipe-area');
+            let startX = 0;
+
+            area.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
+            area.addEventListener('touchend', e => {
+                const diffX = e.changedTouches[0].clientX - startX;
+                const days = Object.keys(scheduleData);
+                const idx = days.indexOf(selectedDay);
+
+                if (Math.abs(diffX) > 45) {
+                    if (diffX < 0 && idx < days.length - 1) {
+                        renderSchedule(days[idx + 1]);
+                    } else if (diffX > 0 && idx > 0) {
+                        renderSchedule(days[idx - 1]);
+                    }
+                }
+            }, { passive: true });
+        }
+
+        // ==================== RENDER PENGURUS & ANGGOTA KELAS ====================
+        function renderMembers() {
+            const pengurusContainer = document.getElementById('pengurus-list');
+            pengurusContainer.innerHTML = pengurusData.map(p => `
+                <div class="p-3 rounded-2xl bg-slate-50 dark:bg-neutral-900 border border-slate-200/70 dark:border-neutral-800 flex flex-col items-center text-center">
+                    <img src="${p.avatar}" onerror="this.src='https://placehold.co/150x150/6366f1/ffffff?text=${encodeURIComponent(p.name.charAt(0))}'"
+                         class="w-12 h-12 rounded-full object-cover mb-2 ring-2 ring-ig-blue/40" alt="${p.name}">
+                    <span class="text-[10px] font-bold text-ig-blue bg-blue-500/10 px-2 py-0.5 rounded-full">${p.role}</span>
+                    <p class="text-xs font-bold mt-1 line-clamp-1">${p.name}</p>
+                    <p class="text-[10px] text-slate-400">${p.ig}</p>
+                </div>
+            `).join('');
+
+            const anggotaContainer = document.getElementById('anggota-list');
+            anggotaContainer.innerHTML = anggotaData.map(a => `
+                <div class="py-2.5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-neutral-800 text-[10px] font-bold flex items-center justify-center text-slate-600 dark:text-neutral-300">
+                            ${a.absen}
+                        </span>
+                        <div>
+                            <p class="text-xs font-semibold">${a.name}</p>
+                            <p class="text-[10px] text-slate-400">${a.role}</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-medium text-ig-blue">${a.ig}</span>
+                </div>
+            `).join('');
+        }
+
+        // ==================== BOTTOM NAVIGATION ====================
+        function switchBottomNav(target) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-profile').classList.add('hidden');
+
+            ['home', 'schedule', 'members'].forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                btn.classList.remove('text-slate-900', 'dark:text-white');
+                btn.classList.add('text-slate-400', 'dark:text-neutral-500');
+            });
+            document.getElementById('nav-profile').classList.remove('border-slate-900', 'dark:border-white');
+            document.getElementById('nav-profile').classList.add('border-transparent');
+
+            if (target === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('view-home').classList.add('flex');
+                document.getElementById('nav-home').classList.add('text-slate-900', 'dark:text-white');
+            } else if (target === 'schedule') {
+                document.getElementById('view-profile').classList.remove('hidden');
+                document.getElementById('view-profile').classList.add('flex');
+                switchProfileTab(1);
+                document.getElementById('nav-schedule').classList.add('text-slate-900', 'dark:text-white');
+            } else if (target === 'members') {
+                document.getElementById('view-profile').classList.remove('hidden');
+                document.getElementById('view-profile').classList.add('flex');
+                switchProfileTab(2);
+                document.getElementById('nav-members').classList.add('text-slate-900', 'dark:text-white');
+            } else {
+                document.getElementById('view-profile').classList.remove('hidden');
+                document.getElementById('view-profile').classList.add('flex');
+                switchProfileTab(0);
+                document.getElementById('nav-profile').classList.remove('border-transparent');
+                document.getElementById('nav-profile').classList.add('border-slate-900', 'dark:border-white');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================== CREATE POST & STORY (IGS) BARU ====================
+        function openCreateModal(defaultMode = 'post') {
+            uploadedImageDataUrl = null;
+            document.getElementById('upload-file-label').textContent = 'Unggah foto dari galeri HP/Laptop...';
+            setCreateMode(defaultMode);
+            const m = document.getElementById('create-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function setCreateMode(mode) {
+            createContentMode = mode;
+            const postBtn = document.getElementById('mode-btn-post');
+            const storyBtn = document.getElementById('mode-btn-story');
+            const locLabel = document.getElementById('label-location-or-title');
+            const locInput = document.getElementById('new-post-location');
+            const capLabel = document.getElementById('label-caption-or-text');
+            const capInput = document.getElementById('new-post-caption');
+            const submitBtn = document.getElementById('submit-create-btn');
+
+            if (mode === 'post') {
+                postBtn.className = 'py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-neutral-900 shadow-2xs transition';
+                storyBtn.className = 'py-1.5 text-xs font-bold rounded-lg text-slate-500 dark:text-neutral-400 transition';
+                locLabel.textContent = 'Lokasi';
+                locInput.value = 'Ruang Kelas XII MIPA 1';
+                capLabel.textContent = 'Caption Momen';
+                capInput.placeholder = 'Tulis cerita seru hari ini...';
+                submitBtn.textContent = 'Bagikan ke Feed Kelas ✨';
+            } else {
+                storyBtn.className = 'py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-neutral-900 shadow-2xs transition';
+                postBtn.className = 'py-1.5 text-xs font-bold rounded-lg text-slate-500 dark:text-neutral-400 transition';
+                locLabel.textContent = 'Judul Singkat Story';
+                locInput.value = 'Update Kelas';
+                capLabel.textContent = 'Teks Cerita di IGS';
+                capInput.placeholder = 'Tulis cerita singkat untuk IG Story...';
+                submitBtn.textContent = 'Posting ke IG Story (IGS) ⭕';
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImageDataUrl = e.target.result;
+                document.getElementById('upload-file-label').textContent = `Terpilih: ${file.name}`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function closeCreateModal() {
+            const m = document.getElementById('create-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function submitNewContent(e) {
+            e.preventDefault();
+            const img = uploadedImageDataUrl || document.getElementById('new-post-preset').value;
+            const locOrTitle = document.getElementById('new-post-location').value || 'SMAN 1 Nusantara';
+            const cap = document.getElementById('new-post-caption').value;
+
+            if (createContentMode === 'post') {
+                postsData.unshift({
+                    id: Date.now(),
+                    images: [img],
+                    location: locOrTitle,
+                    caption: cap,
+                    likes: 1,
+                    liked: true,
+                    saved: false,
+                    date: "BARU SAJA",
+                    comments: [
+                        { user: "dimas.pratama", text: "Mantap postingan baru kelas kita! 🔥" }
+                    ]
+                });
+                renderHomeFeed();
+                renderPostsGrid();
+                switchBottomNav('home');
+                openToast('Postingan baru berhasil muncul di Feed teratas! 🎉');
+            } else {
+                storiesData.unshift({
+                    id: Date.now(),
+                    author: "xiimipa1.official",
+                    label: locOrTitle,
+                    subtitle: "Baru saja ditambahkan",
+                    avatar: img,
+                    seen: false,
+                    slides: [
+                        {
+                            image: img,
+                            badge: "STORY BARU",
+                            heading: locOrTitle,
+                            caption: cap,
+                            time: "Baru saja"
+                        }
+                    ]
+                });
+                renderTopStoriesBar();
+                renderProfileHighlights();
+                switchBottomNav('home');
+                openToast('Story (IGS) baru berhasil muncul di barisan terdepan! ⭕');
+            }
+
+            document.getElementById('new-post-caption').value = '';
+            uploadedImageDataUrl = null;
+            closeCreateModal();
+        }
+
+        // ==================== EDIT PROFIL DENGAN SANDI ADMIN (kelas123) ====================
+        function openEditBioModal() {
+            document.getElementById('input-bio-title').value = document.getElementById('bio-title').textContent;
+            document.getElementById('input-bio-desc').value = document.getElementById('bio-desc').textContent;
+            document.getElementById('input-admin-pass').value = '';
+            const m = document.getElementById('edit-bio-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeEditBioModal() {
+            const m = document.getElementById('edit-bio-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function saveBioChanges(e) {
+            e.preventDefault();
+            const pass = document.getElementById('input-admin-pass').value;
+            if (pass !== 'kelas123') {
+                openToast('Sandi admin salah! Coba ketik: kelas123 🔒');
+                return;
+            }
+            document.getElementById('bio-title').textContent = document.getElementById('input-bio-title').value;
+            document.getElementById('bio-desc').textContent = document.getElementById('input-bio-desc').value;
+            closeEditBioModal();
+            openToast('Profil kelas berhasil diperbarui! ✅');
+        }
+
+        // ==================== MODAL AKTIVITAS & DM KELAS ====================
+        function openActivityModal() {
+            document.getElementById('notif-dot')?.classList.add('hidden');
+            const m = document.getElementById('activity-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeActivityModal() {
+            const m = document.getElementById('activity-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function openDmModal() {
+            const m = document.getElementById('dm-modal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeDmModal() {
+            const m = document.getElementById('dm-modal');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function sendDmMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('dm-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const list = document.getElementById('dm-messages-list');
+            const bubble = document.createElement('div');
+            bubble.className = 'flex flex-col items-end ml-auto max-w-[80%]';
+            bubble.innerHTML = `<div class="px-3.5 py-2 rounded-2xl rounded-tr-xs bg-ig-blue text-white">${msg}</div>`;
+            list.appendChild(bubble);
+            list.scrollTop = list.scrollHeight;
+            input.value = '';
+        }
+
+        // ==================== TOAST NOTIFICATION ====================
+        let toastTimeout = null;
+        function openToast(msg) {
+            const box = document.getElementById('toast-box');
+            const text = document.getElementById('toast-message');
+            text.textContent = msg;
+
+            box.classList.remove('opacity-0', '-translate-y-2');
+            box.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.add('opacity-0', '-translate-y-2');
+                box.classList.remove('opacity-100', 'translate-y-0');
+            }, 2600);
+        }
+    </script>
+</body>
+</html>
